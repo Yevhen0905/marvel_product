@@ -52,73 +52,84 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import {ENDPOINT, KEY} from '@/configs/marvel_app';
-  import BackTop from '../components/BackTop.vue';
-  import AllResultsCharacters from '@/components/AllResultsCharacters.vue';
-  import SearchResultsCharacters from '@/components/SearchResultsCharacters.vue';
+import axios from "axios";
+import md5 from "md5";
+import { ENDPOINT, KEY } from "@/configs/marvel_app";
+import BackTop from "../components/BackTop.vue";
+import AllResultsCharacters from "@/components/AllResultsCharacters.vue";
+import SearchResultsCharacters from "@/components/SearchResultsCharacters.vue";
 
-  export default {
-    name: 'Characters',
-    components: {
-      BackTop,
-      AllResultsCharacters,
-      SearchResultsCharacters
-    },
-    data() {
-      return {
-        searchChar: '',
-        characters: [],
-        searchResults: [],
-        limit: 20
-      };
-    },
-    mounted() {
-      this.getCharacters();
-    },
-    methods: {
-      async getCharacters(page) {
-        const ts = new Date().getTime();
-        const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-        const offset = this.limit * (page - 1);
+export default {
+  name: "Characters",
+  components: {
+    BackTop,
+    AllResultsCharacters,
+    SearchResultsCharacters,
+  },
+  data() {
+    return {
+      searchChar: "",
+      characters: [],
+      searchResults: [],
+      limit: 20,
+    };
+  },
+  mounted() {
+    this.getCharacters();
+  },
+  methods: {
+    async getCharacters(page = 1) {
+      const ts = new Date().getTime().toString();
+      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+      const offset = this.limit * (page - 1);
+
+      try {
         const res = await axios.get(ENDPOINT.CHARACTER, {
           params: {
-            ts: ts,
+            ts,
             apikey: KEY.PUBLIC_KEY,
-            hash: hash,
-            offset: offset
-          }
+            hash,
+            offset,
+          },
         });
+
         this.scrollToTop();
         this.characters = res.data.data;
-      },
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
+      }
+    },
+    async searchCharacter(page = 1) {
+      const ts = new Date().getTime().toString();
+      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+      const offset = this.limit * (page - 1);
 
-      async searchCharacter(page) {
-        const ts = new Date().getTime();
-        const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-        const searchChar = this.searchChar;
-        const offset = this.limit * (page - 1);
-        const res = await axios.get(`${ENDPOINT.CHARACTER}`, {
+      try {
+        const res = await axios.get(ENDPOINT.CHARACTER, {
           params: {
-            ts: ts,
+            ts,
             apikey: KEY.PUBLIC_KEY,
-            hash: hash,
-            nameStartsWith: searchChar,
-            offset: offset
-          }
+            hash,
+            nameStartsWith: this.searchChar,
+            offset,
+          },
         });
+
         this.scrollToTop();
         this.searchResults = res.data.data;
-      },
-      scrollToTop() {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'smooth'
-        });
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
       }
-    }
-  };
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss"></style>

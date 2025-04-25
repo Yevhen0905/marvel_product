@@ -1,11 +1,11 @@
 const ENDPOINT = {
-  CHARACTER: 'https://gateway.marvel.com/v1/public/characters',
-  COMIC: 'https://gateway.marvel.com/v1/public/comics'
+  CHARACTER: "https://gateway.marvel.com/v1/public/characters",
+  COMIC: "https://gateway.marvel.com/v1/public/comics",
 };
 
 const KEY = {
-  PRIVATE_KEY: '3020f4cdc625ef35433e465f49bfccf12d3c97ea',
-  PUBLIC_KEY: '261c62ad52668d9d074e4e2e56e39136'
+  PRIVATE_KEY: "f3096f61ac741e4515ea78ff27b55959e60040ba",
+  PUBLIC_KEY: "14fb183dbba7975a0c303ba599ac9c5f",
 };
 
-export {ENDPOINT, KEY};
+export { ENDPOINT, KEY };

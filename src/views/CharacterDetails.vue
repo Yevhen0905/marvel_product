@@ -53,37 +53,37 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import {ENDPOINT, KEY} from '@/configs/marvel_app';
+import axios from "axios";
+import { ENDPOINT, KEY } from "@/configs/marvel_app";
 
-  export default {
-    name: 'CharacterDetails',
-    data() {
-      return {
-        character: {}
-      };
+export default {
+  name: "CharacterDetails",
+  data() {
+    return {
+      character: {},
+    };
+  },
+  mounted() {
+    this.getCharacter();
+  },
+  methods: {
+    async getCharacter() {
+      const ts = new Date().getTime();
+      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+      const CharacterId = this.$route.params.id;
+      // const res = await axios.get(`${ENDPOINT.CHARACTER}/${CharacterId}?apikey=${KEY.PUBLIC_KEY}`)
+      const res = await axios.get(ENDPOINT.CHARACTER, {
+        params: {
+          id: CharacterId,
+          ts: ts,
+          hash: hash,
+          apikey: KEY.PUBLIC_KEY,
+        },
+      });
+      this.character = res.data.data.results;
     },
-    mounted() {
-      this.getCharacter();
-    },
-    methods: {
-      async getCharacter() {
-        const ts = new Date().getTime();
-        const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-        const CharacterId = this.$route.params.id;
-        // const res = await axios.get(`${ENDPOINT.CHARACTER}/${CharacterId}?apikey=${KEY.PUBLIC_KEY}`)
-        const res = await axios.get(ENDPOINT.CHARACTER, {
-          params: {
-            id: CharacterId,
-            ts: ts,
-            hash: hash,
-            apikey: KEY.PUBLIC_KEY
-          }
-        });
-        this.character = res.data.data.results;
-      }
-    }
-  };
+  },
+};
 </script>
 
 <style lang="scss"></style>

@@ -10,18 +10,18 @@
 </template>
 
 <script>
-  import Footer from './components/Footer.vue';
-  import Header from './components/Header.vue';
-  import Navigation from './components/Navigation.vue';
+import Footer from "./components/Footer.vue";
+import Header from "./components/Header.vue";
+import Navigation from "./components/Navigation.vue";
 
-  export default {
-    name: 'App',
-    components: {
-      Navigation,
-      Header,
-      Footer
-    }
-  };
+export default {
+  name: "App",
+  components: {
+    Navigation,
+    Header,
+    Footer,
+  },
+};
 </script>
 
 <style lang="scss" src="./style/style.scss"></style>

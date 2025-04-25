@@ -47,72 +47,80 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import {ENDPOINT, KEY} from '@/configs/marvel_app';
-  import BackTop from '../components/BackTop.vue';
-  import AllResultsComics from '@/components/AllResultsComics.vue';
-  import SearchResultsComics from '@/components/SearchResultsComics.vue';
+import axios from "axios";
+import { ENDPOINT, KEY } from "@/configs/marvel_app";
+import BackTop from "../components/BackTop.vue";
+import AllResultsComics from "@/components/AllResultsComics.vue";
+import SearchResultsComics from "@/components/SearchResultsComics.vue";
 
-  export default {
-    name: 'Comics',
-    components: {
-      BackTop,
-      AllResultsComics,
-      SearchResultsComics
-    },
-    data() {
-      return {
-        searchComic: '',
-        comics: [],
-        searchResults: [],
-        limit: 20
-      };
-    },
-    mounted() {
-      this.getComics();
-    },
-    methods: {
-      async getComics(page) {
-        const ts = new Date().getTime();
-        const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-        const offset = this.limit * (page - 1);
+export default {
+  name: "Comics",
+  components: {
+    BackTop,
+    AllResultsComics,
+    SearchResultsComics,
+  },
+  data() {
+    return {
+      searchComic: "",
+      comics: [],
+      searchResults: [],
+      limit: 20,
+    };
+  },
+  mounted() {
+    this.getComics();
+  },
+  methods: {
+    async getComics(page = 1) {
+      const ts = new Date().getTime().toString();
+      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+      const offset = this.limit * (page - 1);
+      try {
         const res = await axios.get(ENDPOINT.COMIC, {
           params: {
-            ts: ts,
+            ts,
             apikey: KEY.PUBLIC_KEY,
-            hash: hash,
-            offset: offset
-          }
+            hash,
+            offset,
+          },
         });
         this.scrollToTop();
         this.comics = res.data.data;
-      },
-      async searchComics(page) {
-        const ts = new Date().getTime();
-        const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-        const searchComic = this.searchComic;
-        const offset = this.limit * (page - 1);
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
+      }
+    },
+    async searchComics(page = 1) {
+      const ts = new Date().getTime().toString();
+      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+      const offset = this.limit * (page - 1);
+
+      try {
         const res = await axios.get(`${ENDPOINT.COMIC}`, {
           params: {
-            ts: ts,
+            ts,
             apikey: KEY.PUBLIC_KEY,
-            hash: hash,
-            titleStartsWith: searchComic,
-            offset: offset
-          }
+            hash,
+            titleStartsWith: this.searchComic,
+            offset,
+          },
         });
         this.scrollToTop();
         this.searchResults = res.data.data;
-      },
-      scrollToTop() {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'smooth'
-        });
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
       }
-    }
-  };
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss"></style>
