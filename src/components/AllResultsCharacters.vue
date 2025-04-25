@@ -19,7 +19,10 @@
           alt=""
         />
         <h3 class="content_text">{{ character.name }}</h3>
-        <button class="content_btn" :to="{path: '/character/' + character.id}">
+        <button
+          class="content_btn"
+          :to="{ path: '/character/' + character.id }"
+        >
           About character
         </button>
       </router-link>
@@ -39,18 +42,18 @@
 </template>
 
 <script>
-  export default {
-    name: 'AllResultsCharacters',
-    data() {
-      return {
-        page: 1
-      };
+export default {
+  name: "AllResultsCharacters",
+  data() {
+    return {
+      page: 1,
+    };
+  },
+  props: {
+    characters: {
+      type: Object,
+      default: () => {},
     },
-    props: {
-      characters: {
-        type: Object,
-        default: () => {}
-      }
-    }
-  };
+  },
+};
 </script>
