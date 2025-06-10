@@ -71,16 +71,20 @@ export default {
       const ts = new Date().getTime();
       const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const CharacterId = this.$route.params.id;
-      // const res = await axios.get(`${ENDPOINT.CHARACTER}/${CharacterId}?apikey=${KEY.PUBLIC_KEY}`)
-      const res = await axios.get(ENDPOINT.CHARACTER, {
-        params: {
-          id: CharacterId,
-          ts: ts,
-          hash: hash,
-          apikey: KEY.PUBLIC_KEY,
-        },
-      });
-      this.character = res.data.data.results;
+
+      try {
+        const res = await axios.get(ENDPOINT.CHARACTER, {
+          params: {
+            id: CharacterId,
+            ts,
+            hash,
+            apikey: KEY.PUBLIC_KEY,
+          },
+        });
+        this.character = res.data.data.results;
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
+      }
     },
   },
 };

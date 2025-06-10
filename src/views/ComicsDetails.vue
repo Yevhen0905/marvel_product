@@ -77,16 +77,20 @@ export default {
       const ts = new Date().getTime();
       const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const ComicId = this.$route.params.id;
-      // const res = await axios.get(`${ENDPOINT.COMIC}/${ComicId}?apikey=${KEY.PUBLIC_KEY}`)
-      const res = await axios.get(ENDPOINT.COMIC, {
-        params: {
-          id: ComicId,
-          ts: ts,
-          hash: hash,
-          apikey: KEY.PUBLIC_KEY,
-        },
-      });
-      this.comic = res.data.data.results;
+
+      try {
+        const res = await axios.get(ENDPOINT.COMIC, {
+          params: {
+            id: ComicId,
+            ts,
+            hash,
+            apikey: KEY.PUBLIC_KEY,
+          },
+        });
+        this.comic = res.data.data.results;
+      } catch (err) {
+        console.error("Marvel API Error:", err.response?.data || err.message);
+      }
     },
   },
 };

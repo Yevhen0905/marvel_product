@@ -52,9 +52,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import md5 from "md5";
-import { ENDPOINT, KEY } from "@/configs/marvel_app";
+import { fetchMarvelData } from "@/utils/useMarvelApi";
 import BackTop from "../components/BackTop.vue";
 import AllResultsCharacters from "@/components/AllResultsCharacters.vue";
 import SearchResultsCharacters from "@/components/SearchResultsCharacters.vue";
@@ -79,46 +77,30 @@ export default {
   },
   methods: {
     async getCharacters(page = 1) {
-      const ts = new Date().getTime().toString();
-      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const offset = this.limit * (page - 1);
 
       try {
-        const res = await axios.get(ENDPOINT.CHARACTER, {
-          params: {
-            ts,
-            apikey: KEY.PUBLIC_KEY,
-            hash,
-            offset,
-          },
-        });
-
+        const data = await fetchMarvelData("CHARACTER", { offset });
         this.scrollToTop();
-        this.characters = res.data.data;
+        this.characters = data;
       } catch (err) {
-        console.error("Marvel API Error:", err.response?.data || err.message);
+        console.log("Marvel API Error");
       }
     },
+
     async searchCharacter(page = 1) {
-      const ts = new Date().getTime().toString();
-      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const offset = this.limit * (page - 1);
 
       try {
-        const res = await axios.get(ENDPOINT.CHARACTER, {
-          params: {
-            ts,
-            apikey: KEY.PUBLIC_KEY,
-            hash,
-            nameStartsWith: this.searchChar,
-            offset,
-          },
+        const data = await fetchMarvelData("CHARACTER", {
+          nameStartsWith: this.searchChar,
+          offset,
         });
 
         this.scrollToTop();
-        this.searchResults = res.data.data;
+        this.searchResults = data;
       } catch (err) {
-        console.error("Marvel API Error:", err.response?.data || err.message);
+        console.log("Marvel API Error");
       }
     },
     scrollToTop() {

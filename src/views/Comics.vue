@@ -47,8 +47,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { ENDPOINT, KEY } from "@/configs/marvel_app";
+import { fetchMarvelData } from "@/utils/useMarvelApi";
 import BackTop from "../components/BackTop.vue";
 import AllResultsComics from "@/components/AllResultsComics.vue";
 import SearchResultsComics from "@/components/SearchResultsComics.vue";
@@ -73,43 +72,30 @@ export default {
   },
   methods: {
     async getComics(page = 1) {
-      const ts = new Date().getTime().toString();
-      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
-      const offset = this.limit * (page - 1);
-      try {
-        const res = await axios.get(ENDPOINT.COMIC, {
-          params: {
-            ts,
-            apikey: KEY.PUBLIC_KEY,
-            hash,
-            offset,
-          },
-        });
-        this.scrollToTop();
-        this.comics = res.data.data;
-      } catch (err) {
-        console.error("Marvel API Error:", err.response?.data || err.message);
-      }
-    },
-    async searchComics(page = 1) {
-      const ts = new Date().getTime().toString();
-      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const offset = this.limit * (page - 1);
 
       try {
-        const res = await axios.get(`${ENDPOINT.COMIC}`, {
-          params: {
-            ts,
-            apikey: KEY.PUBLIC_KEY,
-            hash,
-            titleStartsWith: this.searchComic,
-            offset,
-          },
-        });
+        const data = await fetchMarvelData("Comic", { offset });
         this.scrollToTop();
-        this.searchResults = res.data.data;
+        this.comics = data;
       } catch (err) {
-        console.error("Marvel API Error:", err.response?.data || err.message);
+        console.log("Marvel API Error");
+      }
+    },
+
+    async searchComics(page = 1) {
+      const offset = this.limit * (page - 1);
+
+      try {
+        const data = await fetchMarvelData("Comic", {
+          titleStartsWith: this.searchComic,
+          offset,
+        });
+
+        this.scrollToTop();
+        this.searchResults = data;
+      } catch (err) {
+        console.log("Marvel API Error");
       }
     },
     scrollToTop() {
