@@ -1,34 +1,12 @@
 <template>
   <div class="main">
     <div class="container">
-      <div class="block_search">
-        <div class="block_search_item">
-          <input
-            class="input_search"
-            v-model="searchChar"
-            type="text"
-            placeholder="Enter character..."
-          />
-          <div class="block_btn_search">
-            <button
-              class="btn_search"
-              type="button"
-              name="Search"
-              @click="searchCharacter(searchChar)"
-            >
-              SEARCH
-            </button>
-            <button
-              class="btn_search"
-              id="SearchReset"
-              v-if="searchResults.results"
-              @click="$router.go(0)"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-      </div>
+      <SearchBox
+        v-model="searchChar"
+        @search="searchCharacter"
+        @reset="reset"
+        :search-results="searchResults"
+      />
       <h2 class="title">CHARACTERS</h2>
       <div class="loader_block" v-if="!characters.results">
         <v-progress-circular class="loader" :size="50" :width="5" indeterminate>
@@ -54,6 +32,7 @@
 <script>
 import { fetchMarvelData } from "@/utils/useMarvelApi";
 import BackTop from "../components/BackTop.vue";
+import SearchBox from "../components/SearchBox.vue";
 import AllResultsCharacters from "@/components/AllResultsCharacters.vue";
 import SearchResultsCharacters from "@/components/SearchResultsCharacters.vue";
 
@@ -61,6 +40,7 @@ export default {
   name: "Characters",
   components: {
     BackTop,
+    SearchBox,
     AllResultsCharacters,
     SearchResultsCharacters,
   },
@@ -68,7 +48,7 @@ export default {
     return {
       searchChar: "",
       characters: [],
-      searchResults: [],
+      searchResults: {},
       limit: 20,
     };
   },
@@ -103,6 +83,12 @@ export default {
         console.log("Marvel API Error");
       }
     },
+
+    reset() {
+      this.searchChar = "";
+      this.searchResults = {};
+    },
+
     scrollToTop() {
       window.scrollTo({
         top: 0,

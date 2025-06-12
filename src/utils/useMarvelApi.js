@@ -24,3 +24,26 @@ export async function fetchMarvelData(type, extraParams = {}) {
     throw error;
   }
 }
+
+export async function fetchMarvelDataById(type, extraParams = {}) {
+  const ts = new Date().getTime();
+  const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
+
+  const url = ENDPOINT[type.toUpperCase()];
+
+  try {
+    const res = await axios.get(url, {
+      params: {
+        ts,
+        apikey: KEY.PUBLIC_KEY,
+        hash,
+        ...extraParams,
+      },
+    });
+
+    return res.data.data.results;
+  } catch (error) {
+    console.error("Marvel API Error:", error.response?.data || error.message);
+    throw error;
+  }
+}

@@ -53,8 +53,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { ENDPOINT, KEY } from "@/configs/marvel_app";
+import { fetchMarvelDataById } from "@/utils/useMarvelApi";
 
 export default {
   name: "CharacterDetails",
@@ -68,22 +67,15 @@ export default {
   },
   methods: {
     async getCharacter() {
-      const ts = new Date().getTime();
-      const hash = md5(ts + KEY.PRIVATE_KEY + KEY.PUBLIC_KEY);
       const CharacterId = this.$route.params.id;
 
       try {
-        const res = await axios.get(ENDPOINT.CHARACTER, {
-          params: {
-            id: CharacterId,
-            ts,
-            hash,
-            apikey: KEY.PUBLIC_KEY,
-          },
+        const data = await fetchMarvelDataById("CHARACTER", {
+          id: CharacterId,
         });
-        this.character = res.data.data.results;
+        this.character = data;
       } catch (err) {
-        console.error("Marvel API Error:", err.response?.data || err.message);
+        console.log("Marvel API Error");
       }
     },
   },
